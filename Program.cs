@@ -19,6 +19,9 @@ namespace Module_7
                     DisplayPromotions(connection);
                     DisplayCities(connection);
                     DisplayCountries(connection);
+                    DisplayCustomersByCity(connection, "Kyiv");
+                    DisplayCustomersByCountry(connection, "Ukraine");
+                    DisplayPromotionsByCountry(connection, "Ukraine");
                 }
                 catch (Exception ex)
                 {
@@ -26,6 +29,51 @@ namespace Module_7
                 }
             }
             Console.ReadLine();
+        }
+        static void DisplayCustomersByCity(SqlConnection connection, string city)
+        {
+            Console.WriteLine($"\nList of Customers in {city}:");
+            using (SqlCommand command = new SqlCommand("SELECT * FROM Customers WHERE City = @City", connection))
+            {
+                command.Parameters.AddWithValue("@City", city);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"CustomerID: {reader["CustomerID"]}, FullName: {reader["FullName"]}, BirthDate: {reader["BirthDate"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayCustomersByCountry(SqlConnection connection, string country)
+        {
+            Console.WriteLine($"\nList of Customers in {country}:");
+            using (SqlCommand command = new SqlCommand("SELECT * FROM Customers WHERE Country = @Country", connection))
+            {
+                command.Parameters.AddWithValue("@Country", country);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"CustomerID: {reader["CustomerID"]}, FullName: {reader["FullName"]}, BirthDate: {reader["BirthDate"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayPromotionsByCountry(SqlConnection connection, string country)
+        {
+            Console.WriteLine($"\nList of Promotions in {country}:");
+            using (SqlCommand command = new SqlCommand("SELECT * FROM Promotions WHERE Country = @Country", connection))
+            {
+                command.Parameters.AddWithValue("@Country", country);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"PromotionID: {reader["PromotionID"]}, StartDate: {reader["StartDate"]}, EndDate: {reader["EndDate"]}");
+                    }
+                }
+            }
         }
         static void DisplayCountries(SqlConnection connection)
         {
