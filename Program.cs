@@ -14,14 +14,14 @@ namespace Module_7
                 {
                     connection.Open();
                     Console.WriteLine("Database connection successful!");
-                    DisplayCustomers(connection);
-                    DisplayCustomerEmails(connection);
-                    DisplayPromotions(connection);
-                    DisplayCities(connection);
-                    DisplayCountries(connection);
-                    DisplayCustomersByCity(connection, "Kyiv");
-                    DisplayCustomersByCountry(connection, "Ukraine");
-                    DisplayPromotionsByCountry(connection, "Ukraine");
+                    //DisplayCustomers(connection);
+                    //DisplayCustomerEmails(connection);
+                    //DisplayPromotions(connection);
+                    //DisplayCities(connection);
+                    //DisplayCountries(connection);
+                    //DisplayCustomersByCity(connection, "Kyiv");
+                    //DisplayCustomersByCountry(connection, "Ukraine");
+                    //DisplayPromotionsByCountry(connection, "Ukraine");
                     //InsertNewCustomer(connection, "John Doe", "1990-01-01", "john.doe@email.com", "Kyiv", "Ukraine");
                     //InsertNewCountry(connection, "Germany");
                     //InsertNewCity(connection, "Berlin", "Germany");
@@ -32,11 +32,14 @@ namespace Module_7
                     //UpdateCity(connection, 1, "Updated Kyiv", "Updated Ukraine");
                     //UpdateSection(connection, 1, "Updated Electronics");
                     //UpdatePromotionalProduct(connection, 1, "Updated Smartphone", "Updated Electronics", "2024-02-01", "2024-02-15");
-                    DeleteCustomer(connection, 1);
-                    DeleteCountry(connection, 1);
-                    DeleteCity(connection, 1);
-                    DeleteSection(connection, 1);
-                    DeletePromotionalProduct(connection, 1);
+                    //DeleteCustomer(connection, 1);
+                    //DeleteCountry(connection, 1);
+                    //DeleteCity(connection, 1);
+                    //DeleteSection(connection, 1);
+                    //DeletePromotionalProduct(connection, 1);
+                    DisplayCitiesByCountry(connection, "Ukraine");
+                    DisplaySectionsByCustomer(connection, 1);
+                    DisplayPromotionalProductsBySection(connection, "Electronics");
                 }
                 catch (Exception ex)
                 {
@@ -44,6 +47,51 @@ namespace Module_7
                 }
             }
             Console.ReadLine();
+        }
+        static void DisplayCitiesByCountry(SqlConnection connection, string country)
+        {
+            Console.WriteLine($"\nList of Cities in {country}:");
+            using (SqlCommand command = new SqlCommand("SELECT DISTINCT City FROM Customers WHERE Country = @Country", connection))
+            {
+                command.Parameters.AddWithValue("@Country", country);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"City: {reader["City"]}");
+                    }
+                }
+            }
+        }
+        static void DisplaySectionsByCustomer(SqlConnection connection, int customerId)
+        {
+            Console.WriteLine($"\nList of Sections for Customer ID {customerId}:");
+            using (SqlCommand command = new SqlCommand("SELECT DISTINCT Sections.SectionName FROM Customers JOIN Promotions ON Customers.Country = Promotions.Country JOIN PromotionalProducts ON Promotions.PromotionID = PromotionalProducts.PromotionID JOIN Sections ON PromotionalProducts.Section = Sections.SectionID WHERE Customers.CustomerID = @CustomerID", connection))
+            {
+                command.Parameters.AddWithValue("@CustomerID", customerId);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Section Name: {reader["SectionName"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayPromotionalProductsBySection(SqlConnection connection, string sectionName)
+        {
+            Console.WriteLine($"\nList of Promotional Products in Section {sectionName}:");
+            using (SqlCommand command = new SqlCommand("SELECT * FROM PromotionalProducts WHERE Section = (SELECT SectionID FROM Sections WHERE SectionName = @SectionName)", connection))
+            {
+                command.Parameters.AddWithValue("@SectionName", sectionName);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"ProductID: {reader["ProductID"]}, ProductName: {reader["ProductName"]}, StartDate: {reader["StartDate"]}, EndDate: {reader["EndDate"]}");
+                    }
+                }
+            }
         }
         static void DeleteCustomer(SqlConnection connection, int customerId)
         {
