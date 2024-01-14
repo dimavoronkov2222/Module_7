@@ -27,11 +27,16 @@ namespace Module_7
                     //InsertNewCity(connection, "Berlin", "Germany");
                     //InsertNewSection(connection, "Electronics");
                     //InsertNewPromotionalProduct(connection, "Smartphone", "Electronics", "2024-01-15", "2024-01-30");
-                    UpdateCustomer(connection, 1, "Updated John Doe", "1990-01-01", "updated.john.doe@email.com", "Kyiv", "Ukraine");
-                    UpdateCountry(connection, 1, "Updated Ukraine");
-                    UpdateCity(connection, 1, "Updated Kyiv", "Updated Ukraine");
-                    UpdateSection(connection, 1, "Updated Electronics");
-                    UpdatePromotionalProduct(connection, 1, "Updated Smartphone", "Updated Electronics", "2024-02-01", "2024-02-15");
+                    //UpdateCustomer(connection, 1, "Updated John Doe", "1990-01-01", "updated.john.doe@email.com", "Kyiv", "Ukraine");
+                    //UpdateCountry(connection, 1, "Updated Ukraine");
+                    //UpdateCity(connection, 1, "Updated Kyiv", "Updated Ukraine");
+                    //UpdateSection(connection, 1, "Updated Electronics");
+                    //UpdatePromotionalProduct(connection, 1, "Updated Smartphone", "Updated Electronics", "2024-02-01", "2024-02-15");
+                    DeleteCustomer(connection, 1);
+                    DeleteCountry(connection, 1);
+                    DeleteCity(connection, 1);
+                    DeleteSection(connection, 1);
+                    DeletePromotionalProduct(connection, 1);
                 }
                 catch (Exception ex)
                 {
@@ -39,6 +44,51 @@ namespace Module_7
                 }
             }
             Console.ReadLine();
+        }
+        static void DeleteCustomer(SqlConnection connection, int customerId)
+        {
+            using (SqlCommand command = new SqlCommand("DELETE FROM Customers WHERE CustomerID = @CustomerID", connection))
+            {
+                command.Parameters.AddWithValue("@CustomerID", customerId);
+                command.ExecuteNonQuery();
+                Console.WriteLine($"Customer with ID {customerId} deleted successfully.");
+            }
+        }
+        static void DeleteCountry(SqlConnection connection, int countryId)
+        {
+            using (SqlCommand command = new SqlCommand("DELETE FROM Countries WHERE CountryID = @CountryID", connection))
+            {
+                command.Parameters.AddWithValue("@CountryID", countryId);
+                command.ExecuteNonQuery();
+                Console.WriteLine($"Country with ID {countryId} deleted successfully.");
+            }
+        }
+        static void DeleteCity(SqlConnection connection, int cityId)
+        {
+            using (SqlCommand command = new SqlCommand("DELETE FROM Cities WHERE CityID = @CityID", connection))
+            {
+                command.Parameters.AddWithValue("@CityID", cityId);
+                command.ExecuteNonQuery();
+                Console.WriteLine($"City with ID {cityId} deleted successfully.");
+            }
+        }
+        static void DeleteSection(SqlConnection connection, int sectionId)
+        {
+            using (SqlCommand command = new SqlCommand("DELETE FROM Sections WHERE SectionID = @SectionID", connection))
+            {
+                command.Parameters.AddWithValue("@SectionID", sectionId);
+                command.ExecuteNonQuery();
+                Console.WriteLine($"Section with ID {sectionId} deleted successfully.");
+            }
+        }
+        static void DeletePromotionalProduct(SqlConnection connection, int productId)
+        {
+            using (SqlCommand command = new SqlCommand("DELETE FROM PromotionalProducts WHERE ProductID = @ProductID", connection))
+            {
+                command.Parameters.AddWithValue("@ProductID", productId);
+                command.ExecuteNonQuery();
+                Console.WriteLine($"Promotional product with ID {productId} deleted successfully.");
+            }
         }
         static void UpdateCustomer(SqlConnection connection, int customerId, string fullName, string birthDate, string email, string city, string country)
         {
