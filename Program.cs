@@ -22,6 +22,12 @@ namespace Module_7
                     DisplayCustomersByCity(connection, "Kyiv");
                     DisplayCustomersByCountry(connection, "Ukraine");
                     DisplayPromotionsByCountry(connection, "Ukraine");
+                    InsertNewCustomer(connection, "John Doe", "1990-01-01", "john.doe@email.com", "Kyiv", "Ukraine");
+                    InsertNewCountry(connection, "Germany");
+                    InsertNewCity(connection, "Berlin", "Germany");
+                    InsertNewSection(connection, "Electronics");
+                    InsertNewPromotionalProduct(connection, "Smartphone", "Electronics", "2024-01-15", "2024-01-30");
+
                 }
                 catch (Exception ex)
                 {
@@ -29,6 +35,59 @@ namespace Module_7
                 }
             }
             Console.ReadLine();
+        }
+        static void InsertNewCustomer(SqlConnection connection, string fullName, string birthDate, string email, string city, string country)
+        {
+            using (SqlCommand command = new SqlCommand("INSERT INTO Customers (FullName, BirthDate, Email, City, Country) VALUES (@FullName, @BirthDate, @Email, @City, @Country)", connection))
+            {
+                command.Parameters.AddWithValue("@FullName", fullName);
+                command.Parameters.AddWithValue("@BirthDate", birthDate);
+                command.Parameters.AddWithValue("@Email", email);
+                command.Parameters.AddWithValue("@City", city);
+                command.Parameters.AddWithValue("@Country", country);
+                command.ExecuteNonQuery();
+                Console.WriteLine("New customer inserted successfully.");
+            }
+        }
+        static void InsertNewCountry(SqlConnection connection, string countryName)
+        {
+            using (SqlCommand command = new SqlCommand("INSERT INTO Countries (CountryName) VALUES (@CountryName)", connection))
+            {
+                command.Parameters.AddWithValue("@CountryName", countryName);
+                command.ExecuteNonQuery();
+                Console.WriteLine("New country inserted successfully.");
+            }
+        }
+        static void InsertNewCity(SqlConnection connection, string cityName, string country)
+        {
+            using (SqlCommand command = new SqlCommand("INSERT INTO Cities (CityName, Country) VALUES (@CityName, @Country)", connection))
+            {
+                command.Parameters.AddWithValue("@CityName", cityName);
+                command.Parameters.AddWithValue("@Country", country);
+                command.ExecuteNonQuery();
+                Console.WriteLine("New city inserted successfully.");
+            }
+        }
+        static void InsertNewSection(SqlConnection connection, string sectionName)
+        {
+            using (SqlCommand command = new SqlCommand("INSERT INTO Sections (SectionName) VALUES (@SectionName)", connection))
+            {
+                command.Parameters.AddWithValue("@SectionName", sectionName);
+                command.ExecuteNonQuery();
+                Console.WriteLine("New section inserted successfully.");
+            }
+        }
+        static void InsertNewPromotionalProduct(SqlConnection connection, string productName, string section, string startDate, string endDate)
+        {
+            using (SqlCommand command = new SqlCommand("INSERT INTO PromotionalProducts (ProductName, Section, StartDate, EndDate) VALUES (@ProductName, @Section, @StartDate, @EndDate)", connection))
+            {
+                command.Parameters.AddWithValue("@ProductName", productName);
+                command.Parameters.AddWithValue("@Section", section);
+                command.Parameters.AddWithValue("@StartDate", startDate);
+                command.Parameters.AddWithValue("@EndDate", endDate);
+                command.ExecuteNonQuery();
+                Console.WriteLine("New promotional product inserted successfully.");
+            }
         }
         static void DisplayCustomersByCity(SqlConnection connection, string city)
         {
