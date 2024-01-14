@@ -22,12 +22,16 @@ namespace Module_7
                     DisplayCustomersByCity(connection, "Kyiv");
                     DisplayCustomersByCountry(connection, "Ukraine");
                     DisplayPromotionsByCountry(connection, "Ukraine");
-                    InsertNewCustomer(connection, "John Doe", "1990-01-01", "john.doe@email.com", "Kyiv", "Ukraine");
-                    InsertNewCountry(connection, "Germany");
-                    InsertNewCity(connection, "Berlin", "Germany");
-                    InsertNewSection(connection, "Electronics");
-                    InsertNewPromotionalProduct(connection, "Smartphone", "Electronics", "2024-01-15", "2024-01-30");
-
+                    //InsertNewCustomer(connection, "John Doe", "1990-01-01", "john.doe@email.com", "Kyiv", "Ukraine");
+                    //InsertNewCountry(connection, "Germany");
+                    //InsertNewCity(connection, "Berlin", "Germany");
+                    //InsertNewSection(connection, "Electronics");
+                    //InsertNewPromotionalProduct(connection, "Smartphone", "Electronics", "2024-01-15", "2024-01-30");
+                    UpdateCustomer(connection, 1, "Updated John Doe", "1990-01-01", "updated.john.doe@email.com", "Kyiv", "Ukraine");
+                    UpdateCountry(connection, 1, "Updated Ukraine");
+                    UpdateCity(connection, 1, "Updated Kyiv", "Updated Ukraine");
+                    UpdateSection(connection, 1, "Updated Electronics");
+                    UpdatePromotionalProduct(connection, 1, "Updated Smartphone", "Updated Electronics", "2024-02-01", "2024-02-15");
                 }
                 catch (Exception ex)
                 {
@@ -35,6 +39,64 @@ namespace Module_7
                 }
             }
             Console.ReadLine();
+        }
+        static void UpdateCustomer(SqlConnection connection, int customerId, string fullName, string birthDate, string email, string city, string country)
+        {
+            using (SqlCommand command = new SqlCommand("UPDATE Customers SET FullName = @FullName, BirthDate = @BirthDate, Email = @Email, City = @City, Country = @Country WHERE CustomerID = @CustomerID", connection))
+            {
+                command.Parameters.AddWithValue("@CustomerID", customerId);
+                command.Parameters.AddWithValue("@FullName", fullName);
+                command.Parameters.AddWithValue("@BirthDate", birthDate);
+                command.Parameters.AddWithValue("@Email", email);
+                command.Parameters.AddWithValue("@City", city);
+                command.Parameters.AddWithValue("@Country", country);
+                command.ExecuteNonQuery();
+                Console.WriteLine($"Customer with ID {customerId} updated successfully.");
+            }
+        }
+        static void UpdateCountry(SqlConnection connection, int countryId, string countryName)
+        {
+            using (SqlCommand command = new SqlCommand("UPDATE Countries SET CountryName = @CountryName WHERE CountryID = @CountryID", connection))
+            {
+                command.Parameters.AddWithValue("@CountryID", countryId);
+                command.Parameters.AddWithValue("@CountryName", countryName);
+                command.ExecuteNonQuery();
+                Console.WriteLine($"Country with ID {countryId} updated successfully.");
+            }
+        }
+        static void UpdateCity(SqlConnection connection, int cityId, string cityName, string country)
+        {
+            using (SqlCommand command = new SqlCommand("UPDATE Cities SET CityName = @CityName, Country = @Country WHERE CityID = @CityID", connection))
+            {
+                command.Parameters.AddWithValue("@CityID", cityId);
+                command.Parameters.AddWithValue("@CityName", cityName);
+                command.Parameters.AddWithValue("@Country", country);
+                command.ExecuteNonQuery();
+                Console.WriteLine($"City with ID {cityId} updated successfully.");
+            }
+        }
+        static void UpdateSection(SqlConnection connection, int sectionId, string sectionName)
+        {
+            using (SqlCommand command = new SqlCommand("UPDATE Sections SET SectionName = @SectionName WHERE SectionID = @SectionID", connection))
+            {
+                command.Parameters.AddWithValue("@SectionID", sectionId);
+                command.Parameters.AddWithValue("@SectionName", sectionName);
+                command.ExecuteNonQuery();
+                Console.WriteLine($"Section with ID {sectionId} updated successfully.");
+            }
+        }
+        static void UpdatePromotionalProduct(SqlConnection connection, int productId, string productName, string section, string startDate, string endDate)
+        {
+            using (SqlCommand command = new SqlCommand("UPDATE PromotionalProducts SET ProductName = @ProductName, Section = @Section, StartDate = @StartDate, EndDate = @EndDate WHERE ProductID = @ProductID", connection))
+            {
+                command.Parameters.AddWithValue("@ProductID", productId);
+                command.Parameters.AddWithValue("@ProductName", productName);
+                command.Parameters.AddWithValue("@Section", section);
+                command.Parameters.AddWithValue("@StartDate", startDate);
+                command.Parameters.AddWithValue("@EndDate", endDate);
+                command.ExecuteNonQuery();
+                Console.WriteLine($"Promotional product with ID {productId} updated successfully.");
+            }
         }
         static void InsertNewCustomer(SqlConnection connection, string fullName, string birthDate, string email, string city, string country)
         {
