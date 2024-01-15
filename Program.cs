@@ -59,12 +59,16 @@ namespace Module_7
                     //DisplayMostPopularSectionPromotional(connection);
                     //DisplayTop3LeastPopularSectionsPromotional(connection);
                     //DisplayLeastPopularSectionPromotional(connection);
-                    DisplayPromotionalProductsEndingSoon(connection);
-                    DisplayExpiredPromotionalProducts(connection);
-                    ArchiveExpiredPromotionalProducts(connection);
-                    DisplayAverageCustomerAgeBySection(connection);
-                    DisplayAverageCustomerAgeByCity(connection);
-                    DisplayAverageCustomerAgeByCountry(connection);
+                    //DisplayPromotionalProductsEndingSoon(connection);
+                    //DisplayExpiredPromotionalProducts(connection);
+                    //ArchiveExpiredPromotionalProducts(connection);
+                    //DisplayAverageCustomerAgeBySection(connection);
+                    //DisplayAverageCustomerAgeByCity(connection);
+                    //DisplayAverageCustomerAgeByCountry(connection);
+                    DisplayCustomerCountByGenderAndCountry(connection);
+                    DisplayCustomerCountByGender(connection);
+                    DisplayTop3SectionsByGender(connection);
+                    DisplayMostPopularSectionByGender(connection);
                 }
                 catch (Exception ex)
                 {
@@ -738,5 +742,62 @@ namespace Module_7
                 }
             }
         }
+        static void DisplayMostPopularSectionByGender(SqlConnection connection)
+        {
+            Console.WriteLine("\nMost Popular Section by Gender:");
+            using (SqlCommand command = new SqlCommand("SELECT Gender, Section, COUNT(*) AS SectionCount FROM Customers JOIN PromotionalProducts ON Customers.CustomerID = PromotionalProducts.CustomerID GROUP BY Gender, Section ORDER BY SectionCount DESC", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Gender: {reader["Gender"]}, Section: {reader["Section"]}, Section Count: {reader["SectionCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayTop3SectionsByGender(SqlConnection connection)
+        {
+            Console.WriteLine("\nTop 3 Sections by Gender:");
+            using (SqlCommand command = new SqlCommand("SELECT Gender, Section, COUNT(*) AS SectionCount FROM (SELECT Gender, Section, COUNT(*) AS SectionCount, ROW_NUMBER() OVER(PARTITION BY Gender ORDER BY COUNT(*) DESC) AS rn FROM Customers JOIN PromotionalProducts ON Customers.CustomerID = PromotionalProducts.CustomerID GROUP BY Gender, Section) t WHERE rn <= 3", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Gender: {reader["Gender"]}, Section: {reader["Section"]}, Section Count: {reader["SectionCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayCustomerCountByGender(SqlConnection connection)
+        {
+            Console.WriteLine("\nNumber of Customers by Gender:");
+            using (SqlCommand command = new SqlCommand("SELECT Gender, COUNT(*) AS CustomerCount FROM Customers GROUP BY Gender", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Gender: {reader["Gender"]}, Customer Count: {reader["CustomerCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayCustomerCountByGenderAndCountry(SqlConnection connection)
+        {
+            Console.WriteLine("\nNumber of Customers by Gender and Country:");
+            using (SqlCommand command = new SqlCommand("SELECT Gender, Country, COUNT(*) AS CustomerCount FROM Customers GROUP BY Gender, Country", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Gender: {reader["Gender"]}, Country: {reader["Country"]}, Customer Count: {reader["CustomerCount"]}");
+                    }
+                }
+            }
+        }
+
     }
 }
