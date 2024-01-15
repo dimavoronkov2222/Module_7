@@ -55,10 +55,16 @@ namespace Module_7
                     //DisplayMostPopularSection(connection);
                     //DisplayTop3LeastPopularSections(connection);
                     //DisplayLeastPopularSection(connection);
-                    DisplayTop3SectionsPromotional(connection);
-                    DisplayMostPopularSectionPromotional(connection);
-                    DisplayTop3LeastPopularSectionsPromotional(connection);
-                    DisplayLeastPopularSectionPromotional(connection);
+                    //DisplayTop3SectionsPromotional(connection);
+                    //DisplayMostPopularSectionPromotional(connection);
+                    //DisplayTop3LeastPopularSectionsPromotional(connection);
+                    //DisplayLeastPopularSectionPromotional(connection);
+                    DisplayPromotionalProductsEndingSoon(connection);
+                    DisplayExpiredPromotionalProducts(connection);
+                    ArchiveExpiredPromotionalProducts(connection);
+                    DisplayAverageCustomerAgeBySection(connection);
+                    DisplayAverageCustomerAgeByCity(connection);
+                    DisplayAverageCustomerAgeByCountry(connection);
                 }
                 catch (Exception ex)
                 {
@@ -650,6 +656,84 @@ namespace Module_7
                     while (reader.Read())
                     {
                         Console.WriteLine($"City: {reader["City"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayPromotionalProductsEndingSoon(SqlConnection connection)
+        {
+            Console.WriteLine("\nPromotional Products Ending Soon:");
+            using (SqlCommand command = new SqlCommand("SELECT * FROM PromotionalProducts WHERE DATEDIFF(day, GETDATE(), EndDate) <= 3", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"ProductID: {reader["ProductID"]}, ProductName: {reader["ProductName"]}, StartDate: {reader["StartDate"]}, EndDate: {reader["EndDate"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayExpiredPromotionalProducts(SqlConnection connection)
+        {
+            Console.WriteLine("\nExpired Promotional Products:");
+            using (SqlCommand command = new SqlCommand("SELECT * FROM PromotionalProducts WHERE EndDate < GETDATE()", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"ProductID: {reader["ProductID"]}, ProductName: {reader["ProductName"]}, StartDate: {reader["StartDate"]}, EndDate: {reader["EndDate"]}");
+                    }
+                }
+            }
+        }
+        static void ArchiveExpiredPromotionalProducts(SqlConnection connection)
+        {
+            using (SqlCommand command = new SqlCommand("INSERT INTO ArchivedPromotions SELECT * FROM PromotionalProducts WHERE EndDate < GETDATE(); DELETE FROM PromotionalProducts WHERE EndDate < GETDATE()", connection))
+            {
+                command.ExecuteNonQuery();
+                Console.WriteLine("Expired promotional products moved to archive successfully.");
+            }
+        }
+        static void DisplayAverageCustomerAgeBySection(SqlConnection connection)
+        {
+            Console.WriteLine("\nAverage Customer Age by Section:");
+            using (SqlCommand command = new SqlCommand("SELECT Section, AVG(DATEDIFF(year, BirthDate, GETDATE())) AS AverageAge FROM Customers JOIN PromotionalProducts ON Customers.CustomerID = PromotionalProducts.CustomerID GROUP BY Section", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Section: {reader["Section"]}, Average Age: {reader["AverageAge"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayAverageCustomerAgeByCity(SqlConnection connection)
+        {
+            Console.WriteLine("\nAverage Customer Age by City:");
+            using (SqlCommand command = new SqlCommand("SELECT City, AVG(DATEDIFF(year, BirthDate, GETDATE())) AS AverageAge FROM Customers GROUP BY City", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"City: {reader["City"]}, Average Age: {reader["AverageAge"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayAverageCustomerAgeByCountry(SqlConnection connection)
+        {
+            Console.WriteLine("\nAverage Customer Age by Country:");
+            using (SqlCommand command = new SqlCommand("SELECT Country, AVG(DATEDIFF(year, BirthDate, GETDATE())) AS AverageAge FROM Customers GROUP BY Country", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Country: {reader["Country"]}, Average Age: {reader["AverageAge"]}");
                     }
                 }
             }
