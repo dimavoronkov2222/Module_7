@@ -37,9 +37,13 @@ namespace Module_7
                     //DeleteCity(connection, 1);
                     //DeleteSection(connection, 1);
                     //DeletePromotionalProduct(connection, 1);
-                    DisplayCitiesByCountry(connection, "Ukraine");
-                    DisplaySectionsByCustomer(connection, 1);
-                    DisplayPromotionalProductsBySection(connection, "Electronics");
+                    //DisplayCitiesByCountry(connection, "Ukraine");
+                    //DisplaySectionsByCustomer(connection, 1);
+                    //DisplayPromotionalProductsBySection(connection, "Electronics");
+                    DisplayCustomerCountByCity(connection);
+                    DisplayCustomerCountByCountry(connection);
+                    DisplayCityCountByCountry(connection);
+                    DisplayAverageCityCount(connection);
                 }
                 catch (Exception ex)
                 {
@@ -47,6 +51,62 @@ namespace Module_7
                 }
             }
             Console.ReadLine();
+        }
+        static void DisplayCustomerCountByCity(SqlConnection connection)
+        {
+            Console.WriteLine("\nNumber of Customers in Each City:");
+            using (SqlCommand command = new SqlCommand("SELECT City, COUNT(*) AS CustomerCount FROM Customers GROUP BY City", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"City: {reader["City"]}, Customer Count: {reader["CustomerCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayCustomerCountByCountry(SqlConnection connection)
+        {
+            Console.WriteLine("\nNumber of Customers in Each Country:");
+            using (SqlCommand command = new SqlCommand("SELECT Country, COUNT(*) AS CustomerCount FROM Customers GROUP BY Country", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Country: {reader["Country"]}, Customer Count: {reader["CustomerCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayCityCountByCountry(SqlConnection connection)
+        {
+            Console.WriteLine("\nNumber of Cities in Each Country:");
+            using (SqlCommand command = new SqlCommand("SELECT Country, COUNT(DISTINCT City) AS CityCount FROM Customers GROUP BY Country", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Country: {reader["Country"]}, City Count: {reader["CityCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayAverageCityCount(SqlConnection connection)
+        {
+            Console.WriteLine("\nAverage Number of Cities in All Countries:");
+            using (SqlCommand command = new SqlCommand("SELECT AVG(CityCount) AS AverageCityCount FROM (SELECT COUNT(DISTINCT City) AS CityCount FROM Customers GROUP BY Country) AS CityCounts", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Average City Count: {reader["AverageCityCount"]}");
+                    }
+                }
+            }
         }
         static void DisplayCitiesByCountry(SqlConnection connection, string country)
         {
