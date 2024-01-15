@@ -47,17 +47,77 @@ namespace Module_7
                     //DisplaySectionsByCountry(connection, "Ukraine");
                     //DisplayPromotionalProductsBySectionAndTime(connection, "Electronics", "01.01.2024", "31.12.2024");
                     //DisplayPromotionalProductsByCustomer(connection, 1);
-                    DisplayTop3CountriesByCustomers(connection);
-                    DisplayBestCountryByCustomers(connection);
-                    DisplayTop3CitiesByCustomers(connection);
-                    DisplayBestCityByCustomers(connection);
+                    //DisplayTop3CountriesByCustomers(connection);
+                    //DisplayBestCountryByCustomers(connection);
+                    //DisplayTop3CitiesByCustomers(connection);
+                    //DisplayBestCityByCustomers(connection);
+                    DisplayTop3Sections(connection);
+                    DisplayMostPopularSection(connection);
+                    DisplayTop3LeastPopularSections(connection);
+                    DisplayLeastPopularSection(connection);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Connection error: {ex.Message}");
                 }
             }
-            Console.ReadLine();
+            Console.Read();
+        }
+        static void DisplayTop3Sections(SqlConnection connection)
+        {
+            Console.WriteLine("\nTop 3 Most Popular Sections:");
+            using (SqlCommand command = new SqlCommand("SELECT TOP 3 Section, COUNT(*) AS SectionCount FROM PromotionalProducts GROUP BY Section ORDER BY SectionCount DESC", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Section: {reader["Section"]}, Section Count: {reader["SectionCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayMostPopularSection(SqlConnection connection)
+        {
+            Console.WriteLine("\nMost Popular Section:");
+            using (SqlCommand command = new SqlCommand("SELECT TOP 1 Section, COUNT(*) AS SectionCount FROM PromotionalProducts GROUP BY Section ORDER BY SectionCount DESC", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Section: {reader["Section"]}, Section Count: {reader["SectionCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayTop3LeastPopularSections(SqlConnection connection)
+        {
+            Console.WriteLine("\nTop 3 Least Popular Sections:");
+            using (SqlCommand command = new SqlCommand("SELECT TOP 3 Section, COUNT(*) AS SectionCount FROM PromotionalProducts GROUP BY Section ORDER BY SectionCount ASC", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Section: {reader["Section"]}, Section Count: {reader["SectionCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayLeastPopularSection(SqlConnection connection)
+        {
+            Console.WriteLine("\nLeast Popular Section:");
+            using (SqlCommand command = new SqlCommand("SELECT TOP 1 Section, COUNT(*) AS SectionCount FROM PromotionalProducts GROUP BY Section ORDER BY SectionCount ASC", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Section: {reader["Section"]}, Section Count: {reader["SectionCount"]}");
+                    }
+                }
+            }
         }
         static void DisplayTop3CountriesByCustomers(SqlConnection connection)
         {
