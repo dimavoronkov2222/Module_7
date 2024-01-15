@@ -40,10 +40,13 @@ namespace Module_7
                     //DisplayCitiesByCountry(connection, "Ukraine");
                     //DisplaySectionsByCustomer(connection, 1);
                     //DisplayPromotionalProductsBySection(connection, "Electronics");
-                    DisplayCustomerCountByCity(connection);
-                    DisplayCustomerCountByCountry(connection);
-                    DisplayCityCountByCountry(connection);
-                    DisplayAverageCityCount(connection);
+                    //DisplayCustomerCountByCity(connection);
+                    //DisplayCustomerCountByCountry(connection);
+                    //DisplayCityCountByCountry(connection);
+                    //DisplayAverageCityCount(connection);
+                    DisplaySectionsByCountry(connection, "Ukraine");
+                    DisplayPromotionalProductsBySectionAndTime(connection, "Electronics", "01.01.2024", "31.12.2024");
+                    DisplayPromotionalProductsByCustomer(connection, 1);
                 }
                 catch (Exception ex)
                 {
@@ -51,6 +54,53 @@ namespace Module_7
                 }
             }
             Console.ReadLine();
+        }
+        static void DisplaySectionsByCountry(SqlConnection connection, string country)
+        {
+            Console.WriteLine($"\nList of Sections for Customers in {country}:");
+            using (SqlCommand command = new SqlCommand("SELECT DISTINCT Sections.SectionName FROM Customers JOIN Promotions ON Customers.Country = Promotions.Country JOIN PromotionalProducts ON Promotions.PromotionID = PromotionalProducts.PromotionID JOIN Sections ON PromotionalProducts.Section = Sections.SectionID WHERE Customers.Country = @Country", connection))
+            {
+                command.Parameters.AddWithValue("@Country", country);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Section Name: {reader["SectionName"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayPromotionalProductsBySectionAndTime(SqlConnection connection, string sectionName, string startDate, string endDate)
+        {
+            Console.WriteLine($"\nList of Promotional Products in Section {sectionName} from {startDate} to {endDate}:");
+            using (SqlCommand command = new SqlCommand("SELECT * FROM PromotionalProducts WHERE Section = (SELECT SectionID FROM Sections WHERE SectionName = @SectionName) AND StartDate >= @StartDate AND EndDate <= @EndDate", connection))
+            {
+                command.Parameters.AddWithValue("@SectionName", sectionName);
+                command.Parameters.AddWithValue("@StartDate", startDate);
+                command.Parameters.AddWithValue("@EndDate", endDate);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"ProductID: {reader["ProductID"]}, ProductName: {reader["ProductName"]}, StartDate: {reader["StartDate"]}, EndDate: {reader["EndDate"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayPromotionalProductsByCustomer(SqlConnection connection, int customerId)
+        {
+            Console.WriteLine($"\nList of Promotional Products for Customer ID {customerId}:");
+            using (SqlCommand command = new SqlCommand("SELECT DISTINCT PromotionalProducts.ProductID, PromotionalProducts.ProductName, PromotionalProducts.StartDate, PromotionalProducts.EndDate FROM Customers JOIN Promotions ON Customers.Country = Promotions.Country JOIN PromotionalProducts ON Promotions.PromotionID = PromotionalProducts.PromotionID WHERE Customers.CustomerID = @CustomerID", connection))
+            {
+                command.Parameters.AddWithValue("@CustomerID", customerId);
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"ProductID: {reader["ProductID"]}, ProductName: {reader["ProductName"]}, StartDate: {reader["StartDate"]}, EndDate: {reader["EndDate"]}");
+                    }
+                }
+            }
         }
         static void DisplayCustomerCountByCity(SqlConnection connection)
         {
