@@ -44,9 +44,13 @@ namespace Module_7
                     //DisplayCustomerCountByCountry(connection);
                     //DisplayCityCountByCountry(connection);
                     //DisplayAverageCityCount(connection);
-                    DisplaySectionsByCountry(connection, "Ukraine");
-                    DisplayPromotionalProductsBySectionAndTime(connection, "Electronics", "01.01.2024", "31.12.2024");
-                    DisplayPromotionalProductsByCustomer(connection, 1);
+                    //DisplaySectionsByCountry(connection, "Ukraine");
+                    //DisplayPromotionalProductsBySectionAndTime(connection, "Electronics", "01.01.2024", "31.12.2024");
+                    //DisplayPromotionalProductsByCustomer(connection, 1);
+                    DisplayTop3CountriesByCustomers(connection);
+                    DisplayBestCountryByCustomers(connection);
+                    DisplayTop3CitiesByCustomers(connection);
+                    DisplayBestCityByCustomers(connection);
                 }
                 catch (Exception ex)
                 {
@@ -54,6 +58,62 @@ namespace Module_7
                 }
             }
             Console.ReadLine();
+        }
+        static void DisplayTop3CountriesByCustomers(SqlConnection connection)
+        {
+            Console.WriteLine("\nTop 3 Countries by Number of Customers:");
+            using (SqlCommand command = new SqlCommand("SELECT TOP 3 Country, COUNT(*) AS CustomerCount FROM Customers GROUP BY Country ORDER BY CustomerCount DESC", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Country: {reader["Country"]}, Customer Count: {reader["CustomerCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayBestCountryByCustomers(SqlConnection connection)
+        {
+            Console.WriteLine("\nBest Country by Number of Customers:");
+            using (SqlCommand command = new SqlCommand("SELECT TOP 1 Country, COUNT(*) AS CustomerCount FROM Customers GROUP BY Country ORDER BY CustomerCount DESC", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"Country: {reader["Country"]}, Customer Count: {reader["CustomerCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayTop3CitiesByCustomers(SqlConnection connection)
+        {
+            Console.WriteLine("\nTop 3 Cities by Number of Customers:");
+            using (SqlCommand command = new SqlCommand("SELECT TOP 3 City, COUNT(*) AS CustomerCount FROM Customers GROUP BY City ORDER BY CustomerCount DESC", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"City: {reader["City"]}, Customer Count: {reader["CustomerCount"]}");
+                    }
+                }
+            }
+        }
+        static void DisplayBestCityByCustomers(SqlConnection connection)
+        {
+            Console.WriteLine("\nBest City by Number of Customers:");
+            using (SqlCommand command = new SqlCommand("SELECT TOP 1 City, COUNT(*) AS CustomerCount FROM Customers GROUP BY City ORDER BY CustomerCount DESC", connection))
+            {
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine($"City: {reader["City"]}, Customer Count: {reader["CustomerCount"]}");
+                    }
+                }
+            }
         }
         static void DisplaySectionsByCountry(SqlConnection connection, string country)
         {
